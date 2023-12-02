@@ -1,25 +1,28 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
-
 namespace NonogramSolver;
 
+/// <summary>
+/// Class responsible for solving nonogram puzzles.
+/// </summary>
 public class Solver
 {
+
+    /// <summary>
+    /// Solves the nonogram puzzle based on the provided data.
+    /// </summary>
+    /// <param name="data">The nonogram data containing the puzzle size and row/column data.</param>
+    /// <returns>A 2D array representing the solved nonogram puzzle.</returns>
     public static bool[][] Solve(NonogramData data)
     {
         var rows = new bool[data.Size.rows][];
         var cols = new bool[data.Size.cols][];
 
-        int i = 0;
-        foreach (var row in data.RowData)
-            rows[i++] = SolveData(row, data.Size.cols);
+        foreach (var (row, index) in data.RowData.Enumerate())
+            rows[index] = SolveData(row, data.Size.cols);
 
-        i = 0;
-        foreach (var column in data.ColumnData)
-            cols[i++] = SolveData(column, data.Size.rows);
+        foreach (var (col, index) in data.ColumnData.Enumerate())
+            cols[index] = SolveData(col, data.Size.rows);
 
-        var merged = rows.Merge(cols.Transpose());
+        bool[][] fullIntersection = rows.Merge(cols.Transpose());
 
         return [
             [ false, true,  false, true,  false ],
